@@ -2,6 +2,7 @@ import type { BoxProps, FlexProps } from '@chakra-ui/react'
 import {
   Box,
   CloseButton,
+  Divider,
   Drawer,
   DrawerContent,
   Flex,
@@ -24,6 +25,10 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Dashboard', url: '/dashboard' },
   { name: 'Company', url: '/#' },
   { name: 'Jobs', url: '/jobs' }
+]
+
+const AdminItems: Array<LinkItemProps> = [
+  { name: 'Technologies', url: '/dashboard/technologies' }
 ]
 
 export default function DashboardTemplate({
@@ -82,7 +87,14 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
+
       {LinkItems.map((link) => (
+        <NavItem key={link.name} href={link.url}>
+          {link.name}
+        </NavItem>
+      ))}
+      <Divider my={2} />
+      {AdminItems.map((link) => (
         <NavItem key={link.name} href={link.url}>
           {link.name}
         </NavItem>

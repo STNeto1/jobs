@@ -58,3 +58,10 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+model Technology {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+}

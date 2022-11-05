@@ -1,4 +1,5 @@
 import { ChakraProvider } from '@chakra-ui/react'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { type Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import { type AppType } from 'next/app'
@@ -14,6 +15,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <ChakraProvider theme={theme}>
       <SessionProvider session={session}>
         <Component {...pageProps} />
+        <ReactQueryDevtools initialIsOpen={false} />
       </SessionProvider>
     </ChakraProvider>
   )
