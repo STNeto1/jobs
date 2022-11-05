@@ -9,9 +9,34 @@ import {
   useColorModeValue
 } from '@chakra-ui/react'
 import { IconBrandDiscord, IconBrandFacebook } from '@tabler/icons'
-import type { NextPage } from 'next'
+import type { GetServerSidePropsContext, NextPage } from 'next'
+import { unstable_getServerSession } from 'next-auth'
 import { signIn } from 'next-auth/react'
 import Head from 'next/head'
+import { authOptions } from '../api/auth/[...nextauth]'
+
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  )
+
+  if (session) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false
+      }
+    }
+  }
+
+  return {
+    props: {}
+  }
+}
 
 const SignInPage: NextPage = () => {
   const handleSignIn = (provider: string) => {

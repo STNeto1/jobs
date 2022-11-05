@@ -1,6 +1,7 @@
 import { Box, Center, Text } from '@chakra-ui/react'
 import { type NextPage } from 'next'
 import Head from 'next/head'
+import Navigation from '../components/Navigation'
 
 const Home: NextPage = () => {
   return (
@@ -13,6 +14,7 @@ const Home: NextPage = () => {
 
       <main>
         <Box w={'100vw'} h={'100vh'}>
+          <Navigation />
           <Center h={'100vh'}>
             <Text fontSize={'2xl'}>T3 Jobs</Text>
           </Center>
