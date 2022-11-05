@@ -5,6 +5,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
+  IconButton,
   Input,
   Skeleton,
   Table,
@@ -16,6 +17,7 @@ import {
   Tr
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { IconTrash } from '@tabler/icons'
 import type { GetServerSidePropsContext, NextPage } from 'next'
 import { unstable_getServerSession } from 'next-auth'
 import Head from 'next/head'
@@ -85,6 +87,12 @@ const TechnologiesIndexPage: NextPage = () => {
       reset()
     }
   })
+  const { mutate: remove, isLoading: isRemoving } =
+    trpc.technology.remove.useMutation({
+      onSuccess: async () => {
+        await utils.technology.getAll.invalidate()
+      }
+    })
 
   const onSubmit = handleSubmit((data) => mutate(data))
 
@@ -104,6 +112,14 @@ const TechnologiesIndexPage: NextPage = () => {
 
   const handlePagination = async (page: number) => {
     await push(`/dashboard/technologies?page=${page}`)
+  }
+
+  const handleRemove = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this technology?')) {
+      return
+    }
+
+    remove({ id })
   }
 
   return (
@@ -153,6 +169,7 @@ const TechnologiesIndexPage: NextPage = () => {
                     <Th>ID</Th>
                     <Th>Title</Th>
                     <Th>Created</Th>
+                    <Th>Actions</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -162,6 +179,18 @@ const TechnologiesIndexPage: NextPage = () => {
                       <Td>{technology.title}</Td>
                       <Td width={'15%'}>
                         {technology.createdAt.toLocaleString()}
+                      </Td>
+                      <Td width={'15%'}>
+                        <Flex>
+                          <IconButton
+                            aria-label="Delete technology"
+                            icon={<IconTrash width={20} height={20} />}
+                            size={'sm'}
+                            colorScheme={'red'}
+                            isLoading={isRemoving}
+                            onClick={() => handleRemove(technology.id)}
+                          />
+                        </Flex>
                       </Td>
                     </Tr>
                   ))}

@@ -1,6 +1,6 @@
 import slugify from 'slugify'
 import { paginationInput } from '../inputs/pagination'
-import { upsertTechnology } from '../inputs/technology'
+import { singleTechnology, upsertTechnology } from '../inputs/technology'
 import { protectedProcedure, publicProcedure, router } from '../trpc'
 
 export const technologyRouter = router({
@@ -35,5 +35,16 @@ export const technologyRouter = router({
         data,
         pages: Math.ceil(count / input.limit)
       }
+    }),
+  remove: protectedProcedure
+    .input(singleTechnology)
+    .mutation(async ({ ctx, input }) => {
+      const technology = await ctx.prisma.technology.delete({
+        where: {
+          id: input.id
+        }
+      })
+
+      return technology
     })
 })
