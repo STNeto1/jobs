@@ -72,7 +72,7 @@ const Navigation = () => {
   const linkBg = useColorModeValue('gray.200', 'gray.700')
 
   return (
-    <Box>
+    <Box position={'sticky'}>
       <Flex
         bg={bg}
         color={useColorModeValue('gray.600', 'white')}
