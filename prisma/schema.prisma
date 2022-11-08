@@ -49,6 +49,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  company       Company?
 }
 
 model VerificationToken {
@@ -64,4 +65,22 @@ model Technology {
   title     String
   slug      String   @unique
   createdAt DateTime @default(now())
+}
+
+model Company {
+  id        String      @id @default(cuid())
+  name      String
+  size      CompanySize
+  location  String
+  createdAt DateTime    @default(now())
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum CompanySize {
+  STARTUP
+  SMALL
+  MEDIUM
+  LARGE
 }

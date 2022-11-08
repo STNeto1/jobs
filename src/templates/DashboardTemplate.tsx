@@ -23,7 +23,7 @@ interface LinkItemProps {
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Home', url: '/' },
   { name: 'Dashboard', url: '/dashboard' },
-  { name: 'Company', url: '/#' },
+  { name: 'Company', url: '/dashboard/company' },
   { name: 'Jobs', url: '/jobs' }
 ]
 
