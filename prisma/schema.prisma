@@ -78,6 +78,7 @@ model Company {
 
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobs   Job[]
 }
 
 enum CompanySize {
@@ -99,4 +100,20 @@ model UserSkill {
   skill   Technology @relation(fields: [skillId], references: [id], onDelete: Cascade)
 
   @@unique([userId, skillId])
+}
+
+model Job {
+  id    String @id @default(cuid())
+  title String
+
+  company      Company @relation(fields: [companyId], references: [id])
+  companyId    String
+  location     String
+  salary       Float
+  remote       Boolean
+  description  String  @db.Text
+  requirements String  @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
