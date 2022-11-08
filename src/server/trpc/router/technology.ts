@@ -36,6 +36,9 @@ export const technologyRouter = router({
         pages: Math.ceil(count / input.limit)
       }
     }),
+  getAllUnpaginated: publicProcedure.query(async ({ ctx, input }) => {
+    return ctx.prisma.technology.findMany({})
+  }),
   remove: protectedProcedure
     .input(singleTechnology)
     .mutation(async ({ ctx, input }) => {

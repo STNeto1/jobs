@@ -42,14 +42,15 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String      @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?     @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
   company       Company?
+  UserSkill     UserSkill[]
 }
 
 model VerificationToken {
@@ -61,10 +62,11 @@ model VerificationToken {
 }
 
 model Technology {
-  id        String   @id @default(cuid())
+  id        String      @id @default(cuid())
   title     String
-  slug      String   @unique
-  createdAt DateTime @default(now())
+  slug      String      @unique
+  createdAt DateTime    @default(now())
+  UserSkill UserSkill[]
 }
 
 model Company {
@@ -83,4 +85,18 @@ enum CompanySize {
   SMALL
   MEDIUM
   LARGE
+}
+
+model UserSkill {
+  id        String   @id @default(cuid())
+  years     Int
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  skillId String
+  skill   Technology @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId])
 }

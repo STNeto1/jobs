@@ -24,6 +24,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Home', url: '/' },
   { name: 'Dashboard', url: '/dashboard' },
   { name: 'Company', url: '/dashboard/company' },
+  { name: 'Skills', url: '/dashboard/skills' },
   { name: 'Jobs', url: '/jobs' }
 ]
 
