@@ -32,6 +32,9 @@ export const jobRouter = router({
         where: {
           companyId: company.id
         },
+        include: {
+          technologies: true
+        },
         skip: (input.page - 1) * input.limit,
         take: input.limit
       })
@@ -74,6 +77,20 @@ export const jobRouter = router({
         }
       }
 
+      const technologies = await ctx.prisma.technology.findMany({
+        where: {
+          id: {
+            in: input.technologies
+          }
+        }
+      })
+      if (technologies.length !== input.technologies.length) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'One or more technologies are invalid'
+        })
+      }
+
       if (input.id) {
         await ctx.prisma.job.update({
           where: {
@@ -87,7 +104,12 @@ export const jobRouter = router({
             requirements: input.requirements,
             remote: Boolean(input.remote),
             companyId: company.id,
-            level: input.level
+            level: input.level,
+            technologies: {
+              connect: technologies.map((technology) => ({
+                id: technology.id
+              }))
+            }
           }
         })
         return
@@ -102,7 +124,12 @@ export const jobRouter = router({
           requirements: input.requirements,
           remote: Boolean(input.remote),
           companyId: company.id,
-          level: input.level
+          level: input.level,
+          technologies: {
+            connect: technologies.map((technology) => ({
+              id: technology.id
+            }))
+          }
         }
       })
     }),

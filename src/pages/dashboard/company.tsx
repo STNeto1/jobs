@@ -10,6 +10,7 @@ import {
   Box,
   Button,
   Center,
+  Checkbox,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -23,6 +24,7 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Tag,
   Text,
   Textarea
 } from '@chakra-ui/react'
@@ -163,14 +165,15 @@ const UpdateCompanyForm = () => {
           direction={{ base: 'column', lg: 'row' }}
           gap={4}
         >
-          <FormControl>
+          <FormControl isInvalid={!!errors.name}>
             <FormLabel htmlFor="name">Name</FormLabel>
             <Input id="name" placeholder="name" {...register('name')} />
             <FormErrorMessage>
               {errors.name && errors.name.message}
             </FormErrorMessage>
           </FormControl>
-          <FormControl>
+
+          <FormControl isInvalid={!!errors.location}>
             <FormLabel htmlFor="location">Location</FormLabel>
             <Input
               id="location"
@@ -181,7 +184,8 @@ const UpdateCompanyForm = () => {
               {errors.location && errors.location.message}
             </FormErrorMessage>
           </FormControl>
-          <FormControl>
+
+          <FormControl isInvalid={!!errors.size}>
             <FormLabel htmlFor="size">Company Size</FormLabel>
             <Select placeholder="Company Size" {...register('size')}>
               {Object.keys(CompanySize).map((size) => (
@@ -232,14 +236,22 @@ const CreateJobForm = () => {
     register,
     formState: { errors },
     reset,
-    setValue
+    setValue,
+    getValues
   } = useForm<CreateJobFormProps>({
-    resolver: zodResolver(upsertJob)
+    resolver: zodResolver(upsertJob),
+    defaultValues: {
+      technologies: []
+    }
   })
 
   const [txtSalary, setTxtSalary] = useState('$')
+  const [selectedTechnologies, setSelectedTechnologies] = useState<
+    Array<string>
+  >([])
 
   const { mutate, isLoading } = trpc.job.upsertJob.useMutation({})
+  const { data } = trpc.technology.getAllUnpaginated.useQuery()
 
   const onSubmit = handleSubmit((data) => {
     mutate(data, {
@@ -247,6 +259,7 @@ const CreateJobForm = () => {
         await utils.job.listCompanyJobs.invalidate()
         reset()
         setTxtSalary('$')
+        setSelectedTechnologies([])
       }
     })
   })
@@ -256,63 +269,119 @@ const CreateJobForm = () => {
     setValue('salary', parseMaskedPrice(e.target.value))
   }
 
+  const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target
+    const technologies = getValues('technologies')
+
+    if (checked) {
+      setValue('technologies', [...technologies, value])
+      setSelectedTechnologies((prev) => [...prev, value])
+    } else {
+      setValue(
+        'technologies',
+        technologies.filter((t) => t !== value)
+      )
+      setSelectedTechnologies((prev) => prev.filter((t) => t !== value))
+    }
+  }
+
   return (
     <>
       <form onSubmit={onSubmit}>
         <Flex align={'flex-end'} direction={{ base: 'column' }} gap={4}>
-          <FormControl>
-            <FormLabel htmlFor="title">Title</FormLabel>
-            <Input id="title" placeholder="Title" {...register('title')} />
-            <FormErrorMessage>
-              {errors.title && errors.title.message}
-            </FormErrorMessage>
+          <Flex
+            align={'center'}
+            direction={{ base: 'column', lg: 'row' }}
+            gap={4}
+            w={'full'}
+          >
+            <FormControl isInvalid={!!errors.title}>
+              <FormLabel htmlFor="title">Title</FormLabel>
+              <Input id="title" placeholder="Title" {...register('title')} />
+              <FormErrorMessage>
+                {errors.title && errors.title.message}
+              </FormErrorMessage>
+            </FormControl>
+
+            <FormControl isInvalid={!!errors.location}>
+              <FormLabel htmlFor="location">Location</FormLabel>
+              <Input
+                id="location"
+                placeholder="Location"
+                {...register('location')}
+              />
+              <FormErrorMessage>
+                {errors.location && errors.location.message}
+              </FormErrorMessage>
+            </FormControl>
+          </Flex>
+
+          <Flex
+            align={{ base: 'center', lg: 'baseline' }}
+            direction={{ base: 'column', lg: 'row' }}
+            gap={4}
+            w={'full'}
+          >
+            <FormControl isInvalid={!!errors.level}>
+              <FormLabel htmlFor="level">Level</FormLabel>
+              <Select id="level" placeholder="Level" {...register('level')}>
+                {Object.keys(JobLevel).map((level) => (
+                  <option key={level} value={level}>
+                    {level}
+                  </option>
+                ))}
+              </Select>
+              <FormErrorMessage>
+                {errors.level && errors.level.message}
+              </FormErrorMessage>
+            </FormControl>
+
+            <FormControl isInvalid={!!errors.technologies}>
+              <FormLabel htmlFor="salary">Salary</FormLabel>
+              <Input value={txtSalary} onChange={handleChangedSalary} />
+              <FormErrorMessage>
+                {errors.salary && errors.salary.message}
+              </FormErrorMessage>
+            </FormControl>
+            <FormControl isInvalid={!!errors.remote}>
+              <FormLabel htmlFor="remote">Remote</FormLabel>
+              <Select {...register('remote')}>
+                <option value={'1'}>Yes</option>
+                <option value={'0'}>No</option>
+              </Select>
+              <FormErrorMessage>
+                {errors.remote && errors.remote.message}
+              </FormErrorMessage>
+            </FormControl>
+          </Flex>
+
+          <FormControl isInvalid={!!errors.technologies}>
+            <Box
+              overflow={'scroll'}
+              w={'full'}
+              p={{ base: 0, lg: 2 }}
+              borderWidth={'1px'}
+            >
+              <SimpleGrid columns={{ base: 1, lg: 5 }} gap={2}>
+                {data?.map((tech) => (
+                  <Box key={tech.id} p={2}>
+                    <Checkbox
+                      value={tech.id}
+                      isChecked={selectedTechnologies.includes(tech.id)}
+                      onChange={handleCheckboxChange}
+                    >
+                      {tech.title}
+                    </Checkbox>
+                  </Box>
+                ))}
+              </SimpleGrid>
+              <FormErrorMessage>
+                {errors.technologies && errors.technologies.message}
+              </FormErrorMessage>
+            </Box>
           </FormControl>
 
-          <FormControl>
-            <FormLabel htmlFor="location">Location</FormLabel>
-            <Input
-              id="location"
-              placeholder="Location"
-              {...register('location')}
-            />
-            <FormErrorMessage>
-              {errors.location && errors.location.message}
-            </FormErrorMessage>
-          </FormControl>
-
-          <FormControl>
-            <FormLabel htmlFor="level">Level</FormLabel>
-            <Select id="level" placeholder="Level" {...register('level')}>
-              {Object.keys(JobLevel).map((level) => (
-                <option key={level} value={level}>
-                  {level}
-                </option>
-              ))}
-            </Select>
-            <FormErrorMessage>
-              {errors.level && errors.level.message}
-            </FormErrorMessage>
-          </FormControl>
-
-          <FormControl>
-            <FormLabel htmlFor="salary">Salary</FormLabel>
-            <Input value={txtSalary} onChange={handleChangedSalary} />
-            <FormErrorMessage>
-              {errors.salary && errors.salary.message}
-            </FormErrorMessage>
-          </FormControl>
-          <FormControl>
-            <FormLabel htmlFor="remote">Remote</FormLabel>
-            <Select {...register('remote')}>
-              <option value={'1'}>Yes</option>
-              <option value={'0'}>No</option>
-            </Select>
-            <FormErrorMessage>
-              {errors.remote && errors.remote.message}
-            </FormErrorMessage>
-          </FormControl>
-
-          <FormControl>
+          <FormControl isInvalid={!!errors.description}>
             <FormLabel htmlFor="description">Description</FormLabel>
             <Textarea
               id="description"
@@ -324,7 +393,7 @@ const CreateJobForm = () => {
             </FormErrorMessage>
           </FormControl>
 
-          <FormControl>
+          <FormControl isInvalid={!!errors.requirements}>
             <FormLabel htmlFor="requirements">Requirements</FormLabel>
             <Textarea
               id="requirements"
@@ -463,6 +532,26 @@ const ListCompanyJobs = () => {
                     <Text>{job.level}</Text>
                   </Flex>
                 </SimpleGrid>
+
+                <Flex
+                  direction={'column'}
+                  gap={1}
+                  pt={{ base: 2, lg: 4 }}
+                  pb={{ base: 2, lg: 4 }}
+                >
+                  <Flex direction={'row'} align={'center'} gap={2}>
+                    <IconAlphabetLatin size={'16'} />
+                    <Text fontSize={'sm'}>Technologies</Text>
+                  </Flex>
+
+                  <Flex>
+                    {job.technologies.map((tech) => (
+                      <Tag key={tech.id} mr={1}>
+                        {tech.title}
+                      </Tag>
+                    ))}
+                  </Flex>
+                </Flex>
 
                 <Flex
                   direction={'column'}

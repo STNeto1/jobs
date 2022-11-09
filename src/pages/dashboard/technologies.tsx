@@ -140,7 +140,7 @@ const TechnologiesIndexPage: NextPage = () => {
           >
             <form onSubmit={onSubmit}>
               <Flex align={'flex-end'} gap={2}>
-                <FormControl>
+                <FormControl isInvalid={!!errors.title}>
                   <FormLabel htmlFor="title">Title</FormLabel>
                   <Input
                     id="title"
