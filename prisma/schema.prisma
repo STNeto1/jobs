@@ -106,14 +106,21 @@ model Job {
   id    String @id @default(cuid())
   title String
 
-  company      Company @relation(fields: [companyId], references: [id])
+  company      Company  @relation(fields: [companyId], references: [id])
   companyId    String
   location     String
   salary       Float
   remote       Boolean
-  description  String  @db.Text
-  requirements String  @db.Text
+  description  String   @db.Text
+  requirements String   @db.Text
+  level        JobLevel
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum JobLevel {
+  JUNIOR
+  MID
+  SENIOR
 }

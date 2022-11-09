@@ -8,7 +8,7 @@ import {
   Text,
   useColorModeValue
 } from '@chakra-ui/react'
-import { CompanySize } from '@prisma/client'
+import { CompanySize, JobLevel } from '@prisma/client'
 import {
   IconBriefcase,
   IconBuilding,
@@ -25,6 +25,7 @@ type JobCardProps = {
   location: string
   size: CompanySize
   remote: boolean
+  level: JobLevel
 }
 
 export const CompanySizeLabel: Record<CompanySize, string> = {
@@ -34,7 +35,20 @@ export const CompanySizeLabel: Record<CompanySize, string> = {
   [CompanySize.STARTUP]: 'Startup'
 }
 
-const JobCard = ({ company, location, remote, size, title }: JobCardProps) => {
+export const JobLevelLabel: Record<JobLevel, string> = {
+  [JobLevel.JUNIOR]: 'Junior',
+  [JobLevel.MID]: 'Mid',
+  [JobLevel.SENIOR]: 'Senior'
+}
+
+const JobCard = ({
+  company,
+  location,
+  remote,
+  size,
+  title,
+  level
+}: JobCardProps) => {
   return (
     <Link href={'#'}>
       <Box
@@ -86,7 +100,13 @@ const JobCard = ({ company, location, remote, size, title }: JobCardProps) => {
             </GridItem>
             <GridItem>
               <Feature
-                title={CompanySizeLabel[size]}
+                title={`${CompanySizeLabel[size]} company`}
+                icon={<IconLocation width={18} height={18} />}
+              />
+            </GridItem>
+            <GridItem>
+              <Feature
+                title={`${JobLevelLabel[level]} level`}
                 icon={<IconBuilding width={18} height={18} />}
               />
             </GridItem>

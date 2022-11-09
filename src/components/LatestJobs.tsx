@@ -27,6 +27,7 @@ const LatestJobs: React.FC = () => {
             size={job.company.size}
             remote={job.remote}
             title={job.title}
+            level={job.level}
           />
         ))}
       </SimpleGrid>

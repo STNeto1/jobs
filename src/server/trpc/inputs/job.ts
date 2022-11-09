@@ -1,3 +1,4 @@
+import { JobLevel } from '@prisma/client'
 import { z } from 'zod'
 
 export const singleJob = z.object({
@@ -11,5 +12,6 @@ export const upsertJob = z.object({
   salary: z.number(),
   remote: z.preprocess((val) => parseInt(val as string), z.number()),
   description: z.string(),
-  requirements: z.string()
+  requirements: z.string(),
+  level: z.nativeEnum(JobLevel)
 })

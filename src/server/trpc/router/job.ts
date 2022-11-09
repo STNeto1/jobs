@@ -86,7 +86,8 @@ export const jobRouter = router({
             description: input.description,
             requirements: input.requirements,
             remote: Boolean(input.remote),
-            companyId: company.id
+            companyId: company.id,
+            level: input.level
           }
         })
         return
@@ -100,7 +101,8 @@ export const jobRouter = router({
           description: input.description,
           requirements: input.requirements,
           remote: Boolean(input.remote),
-          companyId: company.id
+          companyId: company.id,
+          level: input.level
         }
       })
     }),

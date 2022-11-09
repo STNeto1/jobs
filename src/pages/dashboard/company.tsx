@@ -27,7 +27,7 @@ import {
   Textarea
 } from '@chakra-ui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CompanySize } from '@prisma/client'
+import { CompanySize, JobLevel } from '@prisma/client'
 import { IconAlphabetLatin, IconLocation, IconReportMoney } from '@tabler/icons'
 import type { GetServerSidePropsContext, NextPage } from 'next'
 import { unstable_getServerSession } from 'next-auth'
@@ -281,6 +281,20 @@ const CreateJobForm = () => {
           </FormControl>
 
           <FormControl>
+            <FormLabel htmlFor="level">Level</FormLabel>
+            <Select id="level" placeholder="Level" {...register('level')}>
+              {Object.keys(JobLevel).map((level) => (
+                <option key={level} value={level}>
+                  {level}
+                </option>
+              ))}
+            </Select>
+            <FormErrorMessage>
+              {errors.level && errors.level.message}
+            </FormErrorMessage>
+          </FormControl>
+
+          <FormControl>
             <FormLabel htmlFor="salary">Salary</FormLabel>
             <Input value={txtSalary} onChange={handleChangedSalary} />
             <FormErrorMessage>
@@ -408,7 +422,7 @@ const ListCompanyJobs = () => {
             <AccordionPanel pb={4} pt={2}>
               <Flex direction={'column'} gap={2}>
                 <SimpleGrid
-                  columns={{ base: 1, lg: 3 }}
+                  columns={{ base: 1, lg: 4 }}
                   gap={2}
                   pt={{ base: 2, lg: 4 }}
                   pb={{ base: 2, lg: 4 }}
@@ -438,6 +452,15 @@ const ListCompanyJobs = () => {
                     </Flex>
 
                     <Text>{job.remote ? 'Yes' : 'No'}</Text>
+                  </Flex>
+
+                  <Flex direction={'column'} gap={1} pt={2}>
+                    <Flex direction={'row'} align={'center'} gap={2}>
+                      <IconLocation size={'16'} />
+                      <Text fontSize={'sm'}>Level</Text>
+                    </Flex>
+
+                    <Text>{job.level}</Text>
                   </Flex>
                 </SimpleGrid>
 
