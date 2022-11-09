@@ -73,9 +73,7 @@ export const getServerSideProps = async (
 const CompanyIndexPage: NextPage = () => {
   const isLoading = false
 
-  const utils = trpc.useContext()
-
-  // TODO add logo
+  const [hasCompany, setHasCompany] = useState(false)
 
   return (
     <>
@@ -96,13 +94,15 @@ const CompanyIndexPage: NextPage = () => {
             <Tabs variant="enclosed">
               <TabList>
                 <Tab>Company Info</Tab>
-                <Tab>Create Job</Tab>
-                <Tab>List Company Jobs</Tab>
+                <Tab isDisabled={!hasCompany}>Create Job</Tab>
+                <Tab isDisabled={!hasCompany}>List Company Jobs</Tab>
               </TabList>
 
               <TabPanels p="1rem">
                 <TabPanel>
-                  <UpdateCompanyForm />
+                  <UpdateCompanyForm
+                    setHasCompany={(val) => setHasCompany(val)}
+                  />
                 </TabPanel>
                 <TabPanel>
                   <CreateJobForm />
@@ -119,8 +119,12 @@ const CompanyIndexPage: NextPage = () => {
   )
 }
 
-type UpdateCompanyFormProps = z.infer<typeof upsertCompany>
-const UpdateCompanyForm = () => {
+type UpdateCompanyFormProps = {
+  setHasCompany: (hasCompany: boolean) => void
+}
+
+type UpdateCompanyFormInput = z.infer<typeof upsertCompany>
+const UpdateCompanyForm = ({ setHasCompany }: UpdateCompanyFormProps) => {
   const utils = trpc.useContext()
 
   const {
@@ -129,19 +133,21 @@ const UpdateCompanyForm = () => {
     formState: { errors },
     reset,
     setValue
-  } = useForm<UpdateCompanyFormProps>({
+  } = useForm<UpdateCompanyFormInput>({
     resolver: zodResolver(upsertCompany)
   })
 
   const { data } = trpc.company.userCompany.useQuery(undefined, {
     onSuccess: (data) => {
+      setHasCompany(!!data)
       if (!data) {
         return
       }
 
       setValue('name', data.name)
       setValue('size', data.size)
-      setValue('location', data?.location)
+      setValue('location', data.location)
+      setValue('about', data.about)
     }
   })
 
@@ -198,7 +204,17 @@ const UpdateCompanyForm = () => {
               {errors.size && errors.size.message}
             </FormErrorMessage>
           </FormControl>
+        </Flex>
 
+        <FormControl isInvalid={!!errors.about} pt={4}>
+          <FormLabel htmlFor="about">About</FormLabel>
+          <Textarea id="about" placeholder="About" {...register('about')} />
+          <FormErrorMessage>
+            {errors.about && errors.about.message}
+          </FormErrorMessage>
+        </FormControl>
+
+        <Flex pt={4} justify={'flex-end'}>
           <Button
             colorScheme="teal"
             isLoading={isUpserting}

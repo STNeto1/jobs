@@ -8,5 +8,6 @@ export const singleCompany = z.object({
 export const upsertCompany = z.object({
   name: z.string(),
   size: z.nativeEnum(CompanySize),
-  location: z.string()
+  location: z.string(),
+  about: z.string()
 })

@@ -75,6 +75,7 @@ model Company {
   name      String
   size      CompanySize
   location  String
+  about     String      @db.Text
   createdAt DateTime    @default(now())
 
   userId String @unique

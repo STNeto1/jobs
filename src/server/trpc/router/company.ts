@@ -12,7 +12,7 @@ export const companyRouter = router({
   upsertCompany: protectedProcedure
     .input(upsertCompany)
     .mutation(async ({ ctx, input }) => {
-      const { name, size, location } = input
+      const { name, size, location, about } = input
 
       return ctx.prisma.company.upsert({
         where: {
@@ -21,12 +21,14 @@ export const companyRouter = router({
         update: {
           name,
           size,
-          location
+          location,
+          about
         },
         create: {
           name,
           size,
           location,
+          about,
           user: {
             connect: {
               id: ctx.session.user.id
