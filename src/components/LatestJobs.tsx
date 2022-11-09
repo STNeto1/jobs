@@ -22,6 +22,7 @@ const LatestJobs: React.FC = () => {
         {data?.map((job) => (
           <JobCard
             key={job.id}
+            id={job.id}
             company={job.company.name}
             location={job.location}
             size={job.company.size}

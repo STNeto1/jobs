@@ -6,6 +6,26 @@ import { paginationInput } from '../inputs/pagination'
 import { protectedProcedure, publicProcedure, router } from '../trpc'
 
 export const jobRouter = router({
+  publicJob: publicProcedure.input(singleJob).query(async ({ ctx, input }) => {
+    const job = await ctx.prisma.job.findUnique({
+      where: {
+        id: input.id
+      },
+      include: {
+        company: true,
+        technologies: true
+      }
+    })
+
+    if (!job) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Job not found'
+      })
+    }
+
+    return job
+  }),
   listCompanyJobs: protectedProcedure
     .input(paginationInput)
     .query(async ({ ctx, input }) => {

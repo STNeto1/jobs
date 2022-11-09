@@ -20,6 +20,7 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 
 type JobCardProps = {
+  id: string
   title: string
   company: string
   location: string
@@ -42,6 +43,7 @@ export const JobLevelLabel: Record<JobLevel, string> = {
 }
 
 const JobCard = ({
+  id,
   company,
   location,
   remote,
@@ -50,7 +52,7 @@ const JobCard = ({
   level
 }: JobCardProps) => {
   return (
-    <Link href={'#'}>
+    <Link href={`/job/${id}`}>
       <Box
         maxW={'445px'}
         w={'full'}
