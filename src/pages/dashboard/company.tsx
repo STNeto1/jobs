@@ -375,12 +375,13 @@ const CreateJobForm = () => {
             <Box
               overflow={'scroll'}
               w={'full'}
-              p={{ base: 0, lg: 2 }}
+              p={{ base: 4, lg: 4 }}
               borderWidth={'1px'}
             >
-              <SimpleGrid columns={{ base: 1, lg: 5 }} gap={2}>
+              <FormLabel>Technologies</FormLabel>
+              <SimpleGrid columns={{ base: 1, lg: 5 }}>
                 {data?.map((tech) => (
-                  <Box key={tech.id} p={2}>
+                  <Box key={tech.id} py={2}>
                     <Checkbox
                       value={tech.id}
                       isChecked={selectedTechnologies.includes(tech.id)}
