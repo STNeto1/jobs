@@ -1,7 +1,9 @@
 import { TRPCError } from '@trpc/server'
+import { z } from 'zod'
+
 import { singleJob, upsertJob } from '../inputs/job'
 import { paginationInput } from '../inputs/pagination'
-import { protectedProcedure, router } from '../trpc'
+import { protectedProcedure, publicProcedure, router } from '../trpc'
 
 export const jobRouter = router({
   listCompanyJobs: protectedProcedure
@@ -83,7 +85,7 @@ export const jobRouter = router({
             salary: input.salary,
             description: input.description,
             requirements: input.requirements,
-            remote: input.remote,
+            remote: Boolean(input.remote),
             companyId: company.id
           }
         })
@@ -97,7 +99,7 @@ export const jobRouter = router({
           salary: input.salary,
           description: input.description,
           requirements: input.requirements,
-          remote: input.remote,
+          remote: Boolean(input.remote),
           companyId: company.id
         }
       })
@@ -135,6 +137,24 @@ export const jobRouter = router({
       await ctx.prisma.job.delete({
         where: {
           id: input.id
+        }
+      })
+    }),
+  latestJobs: publicProcedure
+    .input(z.object({ limit: z.number().optional() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.prisma.job.findMany({
+        include: {
+          company: {
+            select: {
+              name: true,
+              size: true
+            }
+          }
+        },
+        take: input.limit || 3,
+        orderBy: {
+          createdAt: 'desc'
         }
       })
     })

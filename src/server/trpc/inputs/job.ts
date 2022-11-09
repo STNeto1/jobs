@@ -9,13 +9,7 @@ export const upsertJob = z.object({
   title: z.string(),
   location: z.string(),
   salary: z.number(),
-  remote: z.preprocess((val) => {
-    if (val === 'true') {
-      return true
-    }
-
-    return false
-  }, z.boolean()),
+  remote: z.preprocess((val) => parseInt(val as string), z.number()),
   description: z.string(),
   requirements: z.string()
 })

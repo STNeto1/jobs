@@ -290,8 +290,8 @@ const CreateJobForm = () => {
           <FormControl>
             <FormLabel htmlFor="remote">Remote</FormLabel>
             <Select {...register('remote')}>
-              <option value={'true'}>Yes</option>
-              <option value={'false'}>No</option>
+              <option value={'1'}>Yes</option>
+              <option value={'0'}>No</option>
             </Select>
             <FormErrorMessage>
               {errors.remote && errors.remote.message}

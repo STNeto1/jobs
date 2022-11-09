@@ -8,17 +8,33 @@ import {
   Text,
   useColorModeValue
 } from '@chakra-ui/react'
+import { CompanySize } from '@prisma/client'
 import {
   IconBriefcase,
   IconBuilding,
-  IconPin,
-  IconVersions
+  IconLocation,
+  IconPin
 } from '@tabler/icons'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 
-const JobCard = () => {
+type JobCardProps = {
+  title: string
+  company: string
+  location: string
+  size: CompanySize
+  remote: boolean
+}
+
+export const CompanySizeLabel: Record<CompanySize, string> = {
+  [CompanySize.LARGE]: 'Large',
+  [CompanySize.MEDIUM]: 'Medium',
+  [CompanySize.SMALL]: 'Small',
+  [CompanySize.STARTUP]: 'Startup'
+}
+
+const JobCard = ({ company, location, remote, size, title }: JobCardProps) => {
   return (
     <Link href={'#'}>
       <Box
@@ -52,32 +68,32 @@ const JobCard = () => {
             fontSize={'2xl'}
             fontFamily={'body'}
           >
-            Typescript Developer
+            {title}
           </Heading>
 
           <Grid rowGap={1}>
             <GridItem>
               <Feature
-                title={'Company X'}
+                title={company}
                 icon={<IconBriefcase width={18} height={18} />}
               />
             </GridItem>
             <GridItem>
               <Feature
-                title={'São Paulo, São Paulo, Brazil'}
+                title={location}
                 icon={<IconPin width={18} height={18} />}
               />
             </GridItem>
             <GridItem>
               <Feature
-                title={'Big Company'}
+                title={CompanySizeLabel[size]}
                 icon={<IconBuilding width={18} height={18} />}
               />
             </GridItem>
             <GridItem>
               <Feature
-                title={'Senior Level'}
-                icon={<IconVersions width={18} height={18} />}
+                title={remote ? 'Remote' : 'On-site'}
+                icon={<IconLocation width={18} height={18} />}
               />
             </GridItem>
           </Grid>
